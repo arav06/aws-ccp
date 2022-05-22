@@ -1,4 +1,4 @@
-# AWS Certified Cloud Practitioner (CLF-C01) Notes
+# AWS Certified Cloud Practitioner (CLF-C01)
 
 > Arav Budhiraja | 22nd May 2022
 
