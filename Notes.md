@@ -505,3 +505,263 @@ However, AZs must not be too far from each other else there will not be low late
 
 We should put our app into many AZs giving us high bandwidth and low latency such that it feels they are all in 1 data center. If 1 AZ is down, our app will be still be running as the other AZ is up
 
+# Cloud Architecture Terminologies 
+
+## Solution Architect 
+
+Solves a technical problem by using multiple systems via researching, docs and experimentation 
+
+## Cloud Architect 
+
+A solution architect that finds solutions for tech problems by using cloud services
+
+Must understand these terms
+
+- Availability: Ability to ensure that services are always up and running
+- Scalability: Ability to grow rapidly without obstructions 
+- Elasticity: Ability to shrink or grow to meet demand 
+- Fault Tolerance: Ability to prevent failures 
+- Disaster Recovery: Ability to recover from a failure 
+- Security: Ability to secure resources
+- Costs: Ability to keep bills as low as possible 
+
+## High Availability 
+
+Ability to keep a service available 
+
+Done by ensuring there is no single point of failure and ensure a certain level of performance 
+
+We should put our app into many AZs giving us high bandwidth and low latency such that it feels they are all in 1 data center. If 1 AZ is down, our app will be still be running as the other AZ is up
+
+This can be done by Elastic Load Balancer. Load balancers allow us to evenly distribute the amount of traffic being sent to multiple servers in one or more data centers. If one server/data center, it will forward the traffic to the other server/data center
+
+By default, Elastic Beanstalk and RDS offer high availability 
+
+## High Scalability 
+
+Ability to manually increase/decrease amount of resources (CPU, memory, storage) based on demand in traffic
+
+Vertical Scaling: Scaling up - Upgrading to a better server
+
+Horizontal Scaling: Scaling out - Adding more servers which are similar. Provides high availability 
+
+## High Elasticity 
+
+Ability to automatically increase/decrease amount of resources (CPU, memory, storage) based on demand in traffic
+
+Horizontal Scaling: 
+
+- Scaling out - Adding more servers which are similar. Provides high availability
+- Scaling in - Removing underutilized servers which are similar
+
+The service which provides high elasticity in AWS is called Auto Scaling Groups. It will automatically add/remove servers based on rules defined via metrics
+
+## Highly Fault Tolerant 
+
+Ability to ensure that there is no single point of failure for a service
+
+Preventing failures 
+
+Fail-over refers to the process of shifting traffic to an underutilized server when the primary server fails 
+
+RDS Multi-AZ is a service allowing us to run a duplicate database in another AZ in case the primary database fails
+
+## High Durability 
+
+Ability to recover from a disaster and prevent loss of data 
+
+Solution to recover from a disaster is called a disaster recovery
+
+CloudEndure Disaster Recover replicates machines into a low-cost area into a region and thus allows fast recovery in case of failures 
+
+## Business Continuity Plan (BCP)
+
+Document that outlines how a business will operate when there is a disruption in services
+
+Recovery Point Objective -> Max acceptable amount of data that can be lost during a data-loss incident after the last recovery. Expressed as amount of time. How much data are you willing to lose?
+
+Recovery Time Objective -> Max amount of downtime that the business can handle without causing a large financial loss. How much time are you willing to be down for?
+
+## Disaster Recovery Options 
+
+- Back and Restore -> Backup data and bring it back to a new infrastructure. Takes hours. Very cheap
+- Pilot Light -> Data is replicated to another region and minimal services are running for this replications. Takes approx 10min. More expensive that backup and restore 
+- Warm Standby -> Scaled down version of your infrastructure in another region which would scale up during a disaster. Takes minutes. More expensive than pilot light
+- Multi-site Active -> Scaled up version of your infrastructure in another region. Real-time. Most expensive
+
+# AWS API
+
+An application programming interface is a piece of software that facilitates the communication between 2 pieces of software (app/services)
+
+Most common way to communicate with an API is via HTTP or HTTPS requests 
+
+Each service has its own service endpoint to interact with it
+
+Actions are provided via JSON data in the request body 
+
+To communicate with the API you will need to request a temporary token via your credentials 
+
+We communicate with the API via developer tools such as the management console (via a web interface), SDK (via a programming language) or CLI (via a shell)
+
+# AWS Management Console 
+
+Web based interface to build, manage and monitor everything from simple apps to complex deployments 
+
+Click to launch and configure resources
+
+Called "ClickOps" since all operations can be done via few clicks
+
+Each AWS service has its own web based interface to manage it. They are called service consoles. Can be accessed by searching for the service
+
+# AWS Account ID
+
+Every AWS account has a unique 12 digits account ID
+
+Used when logging in via an IAM user or cross account roles or support cases
+
+Good to keep it private
+
+# AWS Tools for PowerShell
+
+PowerShell is an automation and management CLI shell and scripting language 
+
+It is built on top of .NET
+
+AWS Tools for PowerShell allow us to interact with the API via cmdlets (Special commands in the form of Verb-Noun)
+
+If we are not on Windows computer, we can use the AWS CloudShell
+
+Can be instead via this command
+
+```bash
+Instead-Module -Name AWS.Tools.Installer
+```
+
+Modules for each AWS service can be installed via the `Install-AWSToolsModule` cmdlet
+
+```bash
+Install-AWSToolsModule AWS.Tools.EC2,AWS.Tools.S3 -CleanUp
+```
+
+# Amazon Resource Name (ARN)
+
+Unique names to identify AWS resources
+
+Use to search for a specific resource
+
+Formats
+
+```txt
+arn:type of aws:service:region:account id:resource id
+arn:type of aws:service:region:account id:resource type/resource id
+arn:type of aws:service:region:account id:resource type:resource id
+```
+
+`type of aws`  refers to AWS China (aws-cn), GovCloud (aws-us-gov) or AWS for all others (aws)
+
+`resource id` can be a number or a path such as `s3/bucket` or `ec2/i-373637673673dgdg2t`
+
+# AWS CLI
+
+A CLI is an interface that lets us interact with the OS by typing commands 
+
+A terminal is a program used to send commands to the shell
+
+A console is the physical computer to input information to the terminal
+
+A shell is the program to interprets user commands and executes them and lets us interact with the OS. Examples: bash, zsh, powershell
+
+AWS CLI is a shell that lets us to interact with the AWS API via a CLI
+
+It relies on Python and the program's name is `aws`
+
+# AWS SDK
+
+A software development kit is a collection of tools for software developer that have been bundled into 1 package
+
+AWS SDK is used to interact with the AWS API via programming languages
+
+The IDE we can use in AWS is called Cloud9
+
+Languages supported are
+
+- Java
+- Python
+- Node JS
+- Ruby
+- Go
+- .NET
+- PHP
+- JavaScript
+- C++
+
+# AWS CloudShell
+
+Browsed based that can be accessed via the management console
+
+Provides 1 GB storage per region
+
+Support bash, zsh and powerful
+
+Can be used in specific regions
+
+# Infrastructure as Code (IaC)
+
+Automates the process of creating, updating or destroying cloud resources by writing code
+
+Following instructions to build infrastructure is full of potential errors 
+
+To solve this problem, we need a way to declare our infrastructure. Instead of installing a web server, we have code which does it. It gives us a language and we say to build 'abcd', 'efgh' and 'ijkl'
+
+If we create an infrastructure using IaC in a development environment we can easily move the code to the test environment and we get the exact same infrastructure without configuring additional settings. 
+
+It is a blue print for our infrastructure 
+
+A collection of resources created with IaC is known as a stack
+
+- AWS CloudFormation (CFN) - Declarative tool. What you write is what you get. More verbose. Supports JSON, YAML
+- AWS Cloud Development Kit (CDK) - Imperative tool. You get what you want and rest is filled in. Less verbose. Supports Python
+
+CloudFormation lets us write the code for our resources as JSON or YAML
+
+Once we have the code, we can use CloudFormation to model what we wish to create in AWS. It lets us create, update and delete resources
+
+All of the resources, combined are known as a stack. CloudFormation easily lets us take down the infrastructure for sometime and we can bring it back up easily
+
+CloudFormation is the definitive source for our AWS architecture
+
+# AWS Toolkit for VSCode
+
+Plugin for VSCode to create, debug and deploy AWS resources
+
+1. AWS Explorer -> View resources linked to our account
+2. AWS CDK Explorer -> View CDK stacks
+3. Amazon Elastic Container Service -> Provides IntelliSense for ECS definition files
+4. Serverless Applications -> Create, debug and deploy serverless apps via CFN
+
+# Access Keys
+
+A key and secret required to interact with the AWS API through scripts instead of the management console
+
+Also called AWS credentials
+
+NEVER SHARE THESE WITH ANYONE
+
+You can have 2 access keys active simultaneously and can deactivate them
+
+Access keys are stored in `~/.aws/credentials`
+
+This file consists on profiles to store access keys for multiple users/accounts
+
+The default profile's access keys are used when no profile is specified
+
+Only the root account can generate access keys
+
+# AWS Documentation
+
+Large collection of technical documentation on how to use AWS services
+
+It is open source
+
+Can be found [here](https://docs.aws.amazon.com)
+
