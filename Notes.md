@@ -4,7 +4,7 @@
 
 # Outline
 
-- Cloud Concept - 26% 
+- Cloud Concepts - 26% 
 - Security and Compliance - 25%
 - Technology (Deep knowledge about core services and basic overview of a bunch of services) - 33%
 - Billing and Pricing - 16%
@@ -105,7 +105,7 @@ Other service categories are
 
 # Types of Cloud Computing
 
-![[Pasted image 20220522164856.png]]
+![Models](models.png)
 
 - Software as a Service (SaaS): The product is run and managed by the CSP. We do not need to worry about anything and just need to use the product. These are typically for customers. Examples: Gmail, Office
 
@@ -213,7 +213,7 @@ S3 as a service is global but the buckets can be setup in different regions
 
 ## Diagram
 
-![[Pasted image 20220522194554.png]]
+![Global](global.png)
 
 ## Point of Presence (PoP)
 
@@ -223,11 +223,11 @@ Owned by AWS or a trusted partner
 
 Used by AWS services which take care of content delivery or upload 
 
-Examples are edge location and regional edge locations
+Examples are edge locations and regional edge cache locations
 
-Edge location are data centers holding cached copies of the most frequent data so as to reduce the time it takes for data to reach an end user
+Edge locations are data centers holding cached copies of the most frequent data so as to reduce the time it takes for data to reach an end user
 
-Regional edge location are data centers holding large cache copies of least frequent data to reduce the time it takes for data to reach an end user and thus save costs
+Regional edge cache locations are data centers holding least frequent data which has been removed from an edge location. It reduces the time it takes for data to reach an end user and thus save costs. They are very close to edge locations 
 
 AWS Service -> Regional Edge Cache -> Edge Location -> End User
 
@@ -765,3 +765,136 @@ It is open source
 
 Can be found [here](https://docs.aws.amazon.com)
 
+# Shared Responsibility Model
+
+A cloud security model that defines the responsibilities of the customers and the responsibilities of the CSP
+
+Each CSP has a different model but they are more or less the same
+
+The 2 organizations involved are the customer and AWS
+
+AWS is responsible for the physical infrastructure -> Hardware, Global Infrastructure, Networking, Physical Security. They are also responsible for all their services 
+
+Customers are responsible for management and configuration of AWS services or other software -> Their OS, the runtime environment, their code, virtual networks, virtual firewalls. Also responsible for encryption of data, monitoring the environment, the data of the customers and permissions management via IAM
+
+Basically, customers are responsible for everything happening in their cloud environment (data, management, configuration)
+
+AWS is responsible for security of the cloud (hardware, infrastructure)
+
+- On prem -> Customer is responsible for everything since a CSP is not involved
+
+- IaaS -> Customer is responsible for code, customer's data, runtime software, OS and the CSP is responsible for physical storage, networking, servers and also virtualizing the server. Example: AWS
+
+- PaaS -> Customer is responsible for code and customer's data. The CSP is responsible for the OS, runtime software, physical storage, networking, servers and also virtualizing the server. Example: Heroku
+
+- SaaS -> The CSP is responsible for code, customer's data, the OS, runtime software, physical storage, networking, servers and also virtualizing the server. The customer is an end user and so they just have to use the app. Example: MS Word
+
+With regards to compute, the models are
+
+## IaaS
+
+- Bare metal (EC2) -> In bare metals instances, the customer owns an entire physical server and not 1 virtual machine. Customer -> Host OS and hypervisor. AWS -> Physical machine
+- Virtual machine (EC2) -> Customer -> Guest OS and containers. AWS -> Host OS, hypervisor, physical machine
+- Containers (ECS) -> Customer -> Configuration, deployment and data in containers. AWS -> Host OS, hypervisor, container daemon
+
+## PaaS
+
+AWS Elastic Beanstalk
+
+Customer -> Uploading code, basic configuration, deployment strategy and configuration of 3rd party services used
+
+AWS -> Physical server, OS, networking, storage and security
+
+## SaaS
+
+Amazon WorkDocs 
+
+Customer -> Content and management of documents and configuring sharing
+
+AWS -> Physical server, OS, networking, storage and security
+
+## FaaS
+
+AWS Lambda
+
+Customer -> Uploading code
+
+AWS -> Deployment, container, physical server, OS, networking, storage and security
+
+![shared responsibility](shared-responsibility.png)
+
+Orange = AWS and Blue = Customer
+
+# Computing
+
+## EC2
+
+Elastic Cloud Compute
+
+A service that allows us to launch virtual machines
+
+Virtual machines are virtual computers within a physical computer. These virtual computers borrow a part of resources (CPU, memory, storage) from the physical computer and use that to run. Made possible by a hypervisor
+
+Multiple VMs can share a single physical server
+
+When a VM is launched, it is called an instance
+
+Backbone of AWS as a lot of AWS services rely on it (S3, RDS, Lambda)
+
+EC2 allows us to
+
+- Choose CPUs
+- Amount of RAM
+- Amount of bandwidth
+- OS
+- Storage mediums
+
+Amazon Machine Image (AMI) is the software part of an instance that contains the guest OS and 3rd party software
+
+## LightSail
+
+A managed service to launch VMs
+
+Can be used to run small and simple apps
+
+Cheaper than EC2
+
+Friendly and easier version of EC2
+
+Does not require much knowledge to use
+
+VM is managed by AWS and we have to manage the app
+
+## Containers
+
+A container is a lightweight virtual environment that quickly runs by using the OS kernel. They contain our code and the software to run it
+
+Elastic Container Service (ECS) can be used to launch Docker containers. It launches containers on multiple EC2 instances which have Docker installed 
+
+Elastic Container Registery (ECR) is the repository which has container images (blueprints). To launch a container, its image needs to be downloaded from ECR
+
+Elastic Kubernetes Service (EKS) is a managed Kubernetes service that is used to manage multiple containers
+
+Clusters are groups of EC2 instances that are running containers which can be managed via EKS or ECS
+
+Serverless services are those in which AWS will manage and configure servers
+
+AWS Fargate is a service that is used to launch containers without the need of servers
+
+AWS Lambda is a service used to run pieces of code without servers. The resource to which a request can be made to run your code is called a function. We simply upload our code, choose the amount of memory it will use and how long it should run for. The code can be ran by making a request to the Lambda function. Charge is based on amount of time code runs for and the number of requests made to the function
+
+## Higher Performance Computing (HPC)
+
+Refers to a group of thousand of servers with fast connections between them to improve performance and efficiency. Clusters are a group of such servers
+
+Nitro System is a combination of dedicated hardware and lightweight hypervisor that gives enhanced security and fast innovation. Used by ECS. Created by AWS
+
+- Nitro Cards -> Special cards for VPC, storage mediums and controller cards
+- Nitro Security Chips -> Present in motherboard and protects hardware parts
+- Nitro Hypervisor -> Lightweight hypervisor 
+
+Bare Metal Instances are EC2 instances of the entire physical server and not a virtual machine running via a hypervisor. Give max performance and control. They are M5 and R5
+
+Bottlerocket is a Linux OS that is built for running containers on VM or bare metal instances. Created by AWS
+
+AWS ParallelCluster lets us easily deploy and manage HPC clusters on AWS
