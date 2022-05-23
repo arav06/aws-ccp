@@ -256,7 +256,7 @@ B = Bytes and b = bits
 
 ## Local Zones
 
-Data centers that are located very close to densely populated areas and provide single digit latency to the area
+Data centers that are located outside a region and are very close to densely populated areas and provide single digit latency to the area
 
 They are just AZs of regions
 
@@ -280,7 +280,7 @@ AWS has partnered with various telecommunication companies
 
 Similar to an AZ, a subnet is associated with the wavelength zone
 
-## Data Residency 
+## Data Sovereignty  
 
 Physical location of where an organization or resources reside 
 
@@ -342,7 +342,7 @@ Then we use a Ground Station EC2 AMI (OS) to launch an instance that we can use 
 
 ## AWS Outposts 
 
-A service that provides a bunch of physical servers that have access to the same infrastructure, API, services and tools as the ones in AWS 
+A service that provides a bunch of physical servers in your data center that have access to the AWS API, services and tools 
 
 3 form factors: 42U (A whole new rack of servers), 2U and 1U 
 
@@ -898,3 +898,232 @@ Bare Metal Instances are EC2 instances of the entire physical server and not a v
 Bottlerocket is a Linux OS that is built for running containers on VM or bare metal instances. Created by AWS
 
 AWS ParallelCluster lets us easily deploy and manage HPC clusters on AWS
+
+## Edge and Hybrid Computing
+
+Edge Computing -> Moving workloads outside of our networks to a data center which is close to the destination 
+
+Hybrid Computing -> Ability to run workloads on prem in data centers and in an AWS VPC
+
+AWS Outposts -> A service that provides a bunch of physical servers in your data center that have access to the AWS API, services and tools 
+
+AWS WaveLength -> Allows us to build and deploy apps in a telecommunication data center. Apps have very low latency since communication takes place over a 5G Network which is close to the end user
+
+VMWare Cloud on AWS -> Allows us to manage on prem servers using VMWare. The servers are treated as EC2 instances. They must use VMWare for virtualization
+
+AWS Local Zone -> Data centers that are outside of an AWS region that are close to a highly populated area. Limited services can be used in these data centers
+
+## Cost and Capacity Management of Computing Services
+
+Cost Management -> How to save money?
+
+Capacity Management -> How do we meet demand of increasing traffic through adding/upgrading servers?
+
+How we pay for EC2?
+
+### On Demand 
+
+Pay as you go
+
+You are charged by the hour/second, depending on the OS. 
+
+Most open-source operating systems such as Linux are charged by the second, for a minimum of 1 minute. Windows is charged by the hour
+
+### Reserved Instances(RI)
+
+For a server which will be running for a long time such as 1 year or 3 years 
+
+Changes the billing model to a complete/partial/up front 
+
+In an RI, if we purchase a system, then IT WILL BE A PERMANENT ACTION
+
+RI IS A BILLING MODEL 
+
+AWS offers Standard RIs for 1-year or 3-year terms
+
+### Spot 
+
+Allows us to not spend a tremendous amount of money by bidding on spare Amazon EC2 instances
+
+Up to 90% off compared to On-Demand 
+
+We can only use stateless workloads i.e. we can shutdown the workload and bring it back up and it will not affect the way the workload is running. The data for it is being stored in a database and the workload can make calls to the database to get the data 
+
+These servers can be reclaimed within a 2 minute warning 
+
+Lets say that we are bidding $5 for a server which costs $10. Gradually the price comes down to $5 and now we own that server and we run our workload. As more and more people start using the AWS infrastructure, the price for the server starts coming back up and once it passes $5, we get a 2 minute warning and after 2 minutes our server will be taken away from us 
+
+### Savings Plan
+
+Ways to save on computing price
+
+### AWS Batch 
+
+Plans, schedules and execute batch workloads across all AWS computing services and it will use spot instances to save money
+
+### AWS Compute Optimizer
+
+Suggest ways to reduce costs and improve performance by using ML to analyze previous history
+
+### EC2 AutoScaling Groups (ASGs)
+
+Automatically add/remove EC2 instances to meet the current demand of traffic
+
+Only runs the amount of instances that are required
+
+Helps save money
+
+### Elastic Load Balancer (ELB)
+
+Evenly distributes the amount of traffic being sent to multiple EC2 instances 
+
+If one server is down, it will forward the traffic to the other server
+
+Can forward traffic to EC2 instances in different AZs
+
+### AWS Elastic Beanstalk (EB)
+
+Lets us easily deploy webapps without us having to worry about underlying OS and hardware
+
+We take care of only our code
+
+Example of PaaS
+
+# Storage
+
+- Block Storage - Elastic Block Store (EBS) - Data is split into blocks and the data can be directly accessed by the OS. Persistent storage. When we need a storage medium for an EC2 instance, we use block storage
+
+- File Storage - AWS Elastic File Storage (EFS) - Files are stored in network file shares which can be accessed by multiple authorized clients. Used to share one drive which can be shared by multiple users/EC2 instances. Each file contains data and metadata. We can access the file share via NFS/SMB
+
+- Object Storage - Amazon Simple Storage Service (S3) - Each object contains the data, metadata and a unique ID. There is no storage limit and it scales up automatically. Objects are stored in resources called buckets. If we wish to change the data of an object, we will have to do it offline and then upload the new data to replace the original object. Buckets can be accessed via HTTP or HTTPS
+
+## Elastic Block Storage(EBS)
+
+PERSISTENT STORAGE 
+
+2 flavors: SSDs and Spinning drives aka HDDs 
+
+EBS is a great place to store databases and other long term information 
+
+SSDs are great if you are constantly going to be writing to the disk
+
+If you are not sure about which storage, go for SSD
+
+Spinning drives are great for storing large files and if you want to store files which you do not access frequently 
+
+Supports encryption
+
+CONSIDER THE WORKLOAD BEFORE SELECTING STORAGE TYPE
+
+## S3
+
+Amazon Simple Storage Service
+
+Serverless scalable object storage with virtually not limit 
+
+We do not worry about underlying infrastructure
+
+Data can be upload/accessed via the S3 console
+
+Data is stored as an object. Each object contains a key (name of the object), the data itself, a version ID (version of the object) and metadata (additional info about the object)
+
+Objects are stored in buckets. Buckets may have folders which may hold buckets
+
+Buckets must be globally unique as they have their own domain name
+
+Each object's size can be from 0 bytes to 5 TB
+
+Designed for 99.999% durability
+
+Can be used to host static websites and other static resources such as pictures/videos
+
+Supports encryption via key management service (manual) or its native encryption (decryption is automatic)
+
+- S3 Standard (Default) -> By default all objects are stored in this type. Fast. Replicated across 3 AZs. Ensures high availability and is very durable. Most expensive 
+
+- S3 Intelligent Tiering -> Uses ML to analyze which objects are being frequently used and which are not. Based on this, it will move objects to the most cost efficient tier. Least accessed data maybe sent to a cheaper class in which it takes sometime for data to be retrieved
+
+- S3 Standard Infrequent Access (IA) -> Fast. Cheaper if you rarely access files. You have to pay to retrieve the object. Objects are copied to 3 AZs. However, it is 50% cheaper than Standard with regards to storing data
+
+- S3 One Zone Infrequent Access (IA) -> Fast. Objects exist in only 1 AZ. Ensures high availability. You have to pay to retrieve the object. Data maybe lost if an incident occurs at the data centers in that AZ. Cheaper than Standard IA by 20%
+
+- S3 Glacier -> For long term storage. It takes minutes to hours to retrieve data. Expensive to retrieve data. Very cheap to store data
+
+- S3 Glacier Deep Archive. For long storage. Takes 12 hours to retrieve data. Expensive to retrieve data. Cheap S3 class
+
+## EFS
+
+Managed data store that automatically scales up and down 
+
+We do not have to worry about provisioning more storage in an EFS share as it is automatic
+
+Automatically copies the data across multiple AZs
+
+Using EFS, we can share files inside/outside the cloud, such as sharing the data to a client who is on prem 
+
+Multiple AZs and VPCs can access the same EFS share/shares 
+
+EFS IS NOT SUPPORTED BY WINDOWS, IT ONLY WORKS WITH LINUX 
+
+Mount targets are used to connect to an EFS share from one or more AZs, such that if 1 mount target is down, we can still access the share from the other AZ
+
+Lets say that in our VPC we have 2 AZs, AZ1 and AZ2. Clients in an AZ do not directly connect to an EFS share. Each AZ gets a mount target, and the clients connect to the mount target which would give us access to the data in the EFS share. If we had only 1 mount target and that would go down, we would not be able to access the data. If we lost connection to the mount target from AZ1, we can still connect to the mount target in AZ2
+
+EC2 instances and containers can connect to EFS shares
+
+Machines which are not in our VPC can also connect to an EFS share in our VPC, via a VPN Gateway
+
+EFS has 2 tierings - Standard and Infrequent Access 
+
+Infrequent Access -> To store data which is rarely accessed. It is little more expensive to access, but the cost for storage is less
+
+Standard -> To store data which is constantly being read from/wrritten to
+
+EFS has 2 modes: Regional and One Zone 
+
+Regional automatically copies data across all AZs. One Zone keeps the data in 1 AZ
+
+We can create EFS shares with the same name as the id of the shares is what matters 
+
+We connect to an EFS share by using the NFS(Network File Sharing) protocol
+
+## AWS Snow Family
+
+Storage and computing devices to physically move data into the data or out of the cloud
+
+Used when a internet/direct connection is slow/costly
+
+- Snowball Edge -> Briefcase sized storage devices. 80 TB or 39.5 TB
+- Snowcone -> Small versions of Snowball Edge. 8 TB HDD or 14 TB SSD
+- Snowmobile -> A truck containing rack of storage mediums that can transfer upto 100 PB
+
+The data from them is delivered to an S3 bucket
+
+Only operates in USA
+
+## Hybrid cloud storage
+
+Storage Gateway ->  Extends on prem storage to AWS
+
+File Gateway -> Extends local storage to an S3 bucket
+
+Volume Gateway -> Copies contents local drives to an S3 bucket so that files are backed up
+
+Tape Gateway -> Stores files on virtual taps for backing them up. Cost effective. For long term storage
+
+## AWS Backup
+
+A managed backup service that makes it easy to automate backing up of data across multiple AWS services
+
+## CloudEndure Disaster Recovery
+
+Continuously replicates machines into a low-cost area into a region and thus allows fast recovery in case of failures 
+
+## Amazon FSx 
+
+Highly performant distributed file systems that can be accessed by Windows hosts via SMB and Linux hosts via Lustre
+
+Amazon FSx for Windows File Server communicates with a Windows host using the SMB protocol and can be used to mount an FSx share to the host
+
+Amazon FSx for Lustre communicates with a Linux hosts using the Lustre protocol and can be used to mount an FSx share to the host
+
