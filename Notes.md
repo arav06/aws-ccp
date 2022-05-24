@@ -1127,3 +1127,83 @@ Amazon FSx for Windows File Server communicates with a Windows host using the SM
 
 Amazon FSx for Lustre communicates with a Linux hosts using the Lustre protocol and can be used to mount an FSx share to the host
 
+# Databases
+
+A collection of organized and structured data than can be easily accessed and managed 
+
+Types
+
+- Relational: Structured data stored in tables, rows and columns. Tables are related to one another as they might share some data
+- Non Relational: Data stored in different formats (XML, JSON, Graphs). Good for horizontal scaling
+
+Special language is used to retrieve/update data
+
+## Data Warehouse
+
+Set of large data (terabytes) which is stored in rows and columns and is used for analysis by preparing reports, graphs
+
+They perform aggregation (grouping) and are optimized around columns
+
+They can perform operations very quickly
+
+Meant for infrequent access and so not used for real time reporting
+
+Consumes data from another relational database
+
+## Key-Value Database
+
+Type of non relational database used to store key-value pairs of data
+
+Fast
+
+Lack relationships, indexes, grouping 
+
+It represents a dictionary 
+
+Can scale beyond relational databases
+
+## Document Database
+
+Type on non relational database that stores documents
+
+Documents refer to a collection of data in JSON/XML format
+
+Type of key-value database with extra features
+
+Tables = Collection
+
+Rows = Documents
+
+Columns = Fields
+
+## NoSQL Database Services
+
+DynamoDB -> Serverless NoSQL key-value and document database. Can store billions of records. Can be scaled to a great extent. Very very fast. No management required. Cost effective
+
+DocumentDB -> NoSQL document database. It is very similar to MongoDB
+
+Amazon Keyspaces -> Managed Apache Cassandra database. NoSQL key-value database. 
+
+## Relational Database Services
+
+Relational Database Service (RDS) -> Allows us to create fully managed relational databases using various data management systems. Patching, replication, backups, tuning, monitoring and high availability are handled by AWS. Supports MySQL, PostgreSQL, MSSQL, MariaDB, Oracle Database, Aurora. The database runs on an EC2 instance which is not managed by us. Cannot automatically scale in/out
+
+Aurora -> Amazon's purpose built, cloud focused database. 5x faster than MySQL and 3x faster than PostgreSQL. Durable, scalable, secure and highly available
+
+Aurora Serverless -> Serverless version of Aurora. Cheaper. Cold start affects it
+
+RDS On VMware -> Allows to deploy the RDS supported data management systems on an on prem server/data center. The server/data center must be using VMware for virtualization. Database is still managed by RDS
+
+## Others
+
+Redshift -> Data warehouse than can store peta bytes of data. Expensive. Fast. Complex queries can be executed Used to store data which is used for generating analytics/reports 
+
+ElastiCache -> Managed database of an in-memory and caching databases such as Redis and Memcached 
+
+Neptune -> Managed graph database. Data is represented as graphs
+
+Amazon Timestreams -> Managed time series database. Used to measure how data changes over time
+
+Amazon Quantum Ledger Database -> Managed ledger database that provides transport, unchangeable and cryptographically different transaction logs
+
+Database Migration Service (DMS) -> Used to migrate data from an on prem database to an AWS database, two databases in the same/different account using different database management systems or from a relational to a non relational database
