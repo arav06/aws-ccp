@@ -1178,7 +1178,7 @@ Columns = Fields
 
 ## NoSQL Database Services
 
-DynamoDB -> Serverless NoSQL key-value and document database. Can store billions of records. Can be scaled to a great extent. Very very fast. No management required. Cost effective
+DynamoDB -> Serverless high performance NoSQL key-value and document database. Can store billions of records. Can be scaled to a great extent. Single digit millisecond read latency. The more pressure we put on it, the more queries continue, the faster it is.  No management required. Cost effective. Can be made faster using DynamoDB Accelerator(DAX). It is a caching server that sits in front of DynamoDB which has sub millisecond read latency
 
 DocumentDB -> NoSQL document database. It is very similar to MongoDB
 
@@ -1196,7 +1196,7 @@ RDS On VMware -> Allows to deploy the RDS supported data management systems on a
 
 ## Others
 
-Redshift -> Data warehouse than can store peta bytes of data. Expensive. Fast. Complex queries can be executed Used to store data which is used for generating analytics/reports 
+Redshift -> Managed data warehouse than can store peta bytes of data that is supposed to be stored for a long time. Grabs data from an S3 bucket. Expensive. Fast. Complex queries can be executed. Used to store data which is used for generating analytics/report. Data can be sent to Amazon QuickSight (Used to create beautiful reports about data)
 
 ElastiCache -> Managed database of an in-memory and caching databases such as Redis and Memcached 
 
@@ -1206,4 +1206,4 @@ Amazon Timestreams -> Managed time series database. Used to measure how data cha
 
 Amazon Quantum Ledger Database -> Managed ledger database that provides transport, unchangeable and cryptographically different transaction logs
 
-Database Migration Service (DMS) -> Used to migrate data from an on prem database to an AWS database, two databases in the same/different account using different database management systems or from a relational to a non relational database
+Database Migration Service (DMS) -> Used to migrate data from an on prem database to an AWS database, two databases in the same/different account using different database management systems or from a relational to a non relational database. Lets say we have a database on prem which we want to shift to the cloud using DMS. If people are constantly writing to that database, DMS will still continue to push data to the cloud
