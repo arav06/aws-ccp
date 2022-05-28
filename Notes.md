@@ -69,7 +69,7 @@ A company which
 
 The 4 core IaaS services are
 
-- Compute - Virtual computer for running code - Elastic Cloud Computer (EC2)
+- Compute - Virtual computer for running code - Elastic Cloud Compute (EC2)
 
 - Networking - Virtual networks for accessing the internet or isolation between networks - VPC (Virtual Private Cloud) Private Cloud Network 
 
@@ -99,13 +99,13 @@ Other service categories are
 
 - Virtual Machines - Running multiple virtual computers within a physical computer. These virtual computers borrow a part of resources (CPU, memory, storage) from the physical computer and use that to run. Made possible by a hypervisor. Multiple computers can share a single physical server. Easy to scale and migrate. Multiple apps will struggle to run at the same time
 
-- Containers - A lightweight virtual environment containing our code that quickly runs by using the OS kernel. They typically run within a VM. Multiple apps can run in the same VM
+- Containers - A lightweight virtual environment containing our code that quickly runs by virtualizing the OS. They typically run within a VM. Multiple apps can run in the same VM
 
 - Functions - Serverless Compute. The CSP manages the containers and VMs.  We upload our code and choose the amount of memory and time it should run for. We pay for the time the code runs for and the VMs only run when code is being executed. Cold start (If a VM takes a long to start) may affect it
 
 # Types of Cloud Computing
 
-![Models](models.png)
+![Models](images/models.png)
 
 - Software as a Service (SaaS): The product is run and managed by the CSP. We do not need to worry about anything and just need to use the product. These are typically for customers. Examples: Gmail, Office
 
@@ -213,7 +213,7 @@ S3 as a service is global but the buckets can be setup in different regions
 
 ## Diagram
 
-![Global](global.png)
+![Global](images/global.png)
 
 ## Point of Presence (PoP)
 
@@ -457,7 +457,7 @@ Aimed at large projects whose profit can be measured in seconds
 3. Business: Running a workload which will generate a profit
 4. Enterprise: Run a workload which has to be up and is essential for a business
 
-![support-plans](support-plans.png)
+![support-plans](images/support-plans.png)
 
 # Budgets
 
@@ -821,7 +821,7 @@ Customer -> Uploading code
 
 AWS -> Deployment, container, physical server, OS, networking, storage and security
 
-![shared responsibility](shared-responsibility.png)
+![shared responsibility](images/shared-responsibility.png)
 
 Orange = AWS and Blue = Customer
 
@@ -839,7 +839,11 @@ Multiple VMs can share a single physical server
 
 When a VM is launched, it is called an instance
 
-Backbone of AWS as a lot of AWS services rely on it (S3, RDS, Lambda)
+Takes minutes to launch new instances
+
+Backbone of AWS as a lot of AWS services rely on it (S3, RDS, Lambda) 
+
+Almost all AWS services use EC2
 
 EC2 allows us to
 
@@ -850,6 +854,197 @@ EC2 allows us to
 - Storage mediums
 
 Amazon Machine Image (AMI) is the software part of an instance that contains the guest OS and 3rd party software
+
+We will need to add a storage medium(s) to the instance via EBS or EFS
+
+Instance Families are different combinations of number of CPUs, amount of RAM, bandwidth and storage which can be used for our instance. Allow us to choose the right combo to meet our requirements
+
+- General Purpose -> CPU, memory and bandwidth are balanced. Used to run web servers/code repositories. T2, Mac (For MacOS servers)
+
+- Compute Optimized -> Ideal for apps that require high performance CPUs. Used for scientific modelling, gaming servers and AD engines. They start with 'C'. C5, C4
+
+- Memory Optimized -> Ideal for apps that require a lot of RAM. Used for memory caching and in-memory databases and realtime analytics. R4, R5
+
+- Storage Optimized -> Ideal for apps that read/write a lot of data. Used for NoSQL databases, in-memory databases and data warehouses. D2, D3
+
+- Accelerated Computing -> Use hardware accelerators or co-processors. Used for ML, speech recognition, seismic analysis. P2, P3
+
+Instance Type refers to the virtual hardware of the instance. 
+
+Format is `InstanceType.Size`. Size refers to something such as nano, small, xlarge, 2xlarge, 8xlarge, metal, etc. The metal size means that the it is not a VM but instead a bare metal machine. Sizes double in price and hardware features
+
+Elastic IP (EIP) -> Static IP address for our EC2 instance. It would not change if we would shut down/reboot the instance 
+
+We can create an image which is a blueprint of the current state of our AMI so that we can save it for later, after we terminate it
+
+We can also create a launch template which is blueprint of hardware and software configurations for an EC2 instance that lets us launch the instance by a click. Instead of constantly manually configuring an instance, we can create a launch template for it and start the launch template multiple times
+
+3 levels of tenancy 
+
+- Shared -> Multiple customers will share the same hardware. Each customer has an isolated VM on the server. Cheapest
+- Dedicated Host -> One customer uses an entire physical server. Billed per hour. Multiple VMs can be deployed on it. Most expensive
+- Dedicated Instance -> EC2 instances belonging to 1 customer run on a physical server. Can be used by all resources of an account such as RDS. If all instances are shutdown the physical hardware maybe changed
+
+| Dedicated Instance                                                                                | Dedicated Host                                   |
+|---------------------------------------------------------------------------------------------------|--------------------------------------------------|
+| Our EC2 instances are isolated (We are the only person using the server) but they are virtualized | Our EC2 instance uses the entire physical server |
+| Billing is per instance we run on that server + $2 regional fee                                   | Billed per physical server                       |
+| We do not get information about the physical server                                               | We get all information about the physical server |
+| We cannot control the physical server                                                             | We have full control over the physical server    |
+| Hardware might be changed once we shut down our instances and bring them back up                  | Hardware is never changed                        |
+| Capacity cannot be increased                                                                      | Capacity can be increased upon request           |
+
+There is a finite amount of servers in an EC2 per instance type
+
+## On Demand 
+
+Pay as you go
+
+You are charged by the hour/second, depending on the OS. 
+
+Linux, Windows and Windows will MSSQL are charged by the second (minimum for 60 seconds)
+
+Low cost
+
+For unpredictable, short term workloads
+
+By default, this is used
+
+No upfront payment/long term commitment 
+
+Best for new apps
+
+##### Least Commitment 
+
+## Reserved 
+
+For a server which will be running for a long time such as 1 year or 3 years 
+
+Save upto 75%
+
+Best for stead apps whose resource usage is known
+
+We can resell unused reserved instances in the Reserved Instance Marketplace
+
+- Allows us to recover the money we spent on an RI which is not being used
+-  RIs can only be sold if they have been active for 30 days and once AWS has received an upfront payment (if applicable)
+- Seller must have a US bank account
+- There must be at least 1 month left in the RI term
+- Seller's company name (and address upon request) will be shared with buyer for taxes
+- A seller can only set an upfront cost for an RI. Usage price and other configurations remain the same as when it was first purchased
+- Seller will retain pricing and capacity benefit of the RI until it is sold 
+- Term will be rounded down to nearest month (3 months 12 days -> 3 months)
+- We can sell upto $20k in RIs 
+- RIs in the GovCloud regions cannot be sold on the RI Marketplace
+
+Changes the billing model to a complete/partial/up front 
+
+If we purchase a instance, then IT WILL BE A PERMANENT ACTION
+
+AWS offers 1 year or 3 years terms
+
+Not renewed automatically 
+
+When the term expires, the plan automatically changes to on demand
+
+Reserved instances can be shared between multiple accounts using AWS Organizations
+
+Based on `Duration x Class x Attributes x Payment`
+
+Longer duration = Greater savings
+
+Class refers to the type of Reserved Instance. Less flexibility = Greater savings
+
+- Standard -> Upto 75% savings. Attributes of the instance can be changed 
+- Convertible -> Upto 54% savings. Instance can be exchanged based on the attributes if they are greater or equal
+
+Standard RI |  Convertible RI| 
+----------- | ----------- 
+Discount upto 72%|Discount upto 54%  | 
+Change AZ, Change instance type, Change network| Instances can be exchanged | 
+Can be bought/sold on the RI Marketplace| Cannot be bought/sold on the RI Marketplace | 
+
+Greater upfront cost = Greater savings
+
+- All Upfront -> Complete upfront is paid at the start
+- Partial Upfront -> A portion is paid at the start and the rest is charged at a discounted rate
+- No Upfront -> Billed at a discounted rate for every hour of the duration even if the instance is not being used
+
+Attributes are based on the class and affect the final price
+
+- Instance Type (Family and Size)
+- Region (Region in which it was purchased)
+- Tenancy (Shared or Dedicated)
+- Platform (OS - Windows or Linux)
+
+| Regional RI                                                                             | Zonal RI                                                          |
+|-----------------------------------------------------------------------------------------|-------------------------------------------------------------------|
+| Purchased for a region                                                                  | Purchased for an AZ                                               |
+| No guarantee that the servers will be available                                         | Guarantee that servers are available                              |
+| Discount applies to all AZs in the region                                               | Discount applies only to that AZ                                  |
+| Can queue purchases                                                                     | Cannot queue purchases                                            |
+| Discount applies to instance usage and family. Size does not matter. Only for Linux RIs | Discount applies to instance usage for the instance type and size |
+
+Per month, we can purchase
+
+- 20 Regional RIs per region
+- 20 Zonal RIs per AZ
+
+Capacity Reservation is a service that allows us to request a reservation of a particular instance type for a specific region/AZ
+
+It is charged at instance type's on demand rate whether the instance is running or not
+
+##### Best for long term
+
+## Spot 
+
+Allows us to not spend a tremendous amount of money by bidding on spare Amazon EC2 instances
+
+AWS has unused servers and they want to maximize the utility of these servers
+
+_Plane offers discounts to fill vacant seats_
+
+Upto 90% off compared to On-Demand 
+
+We will use the resources which are not being used by AWS
+
+Workloads must be able to handle interruptions 
+
+Good for non-critical work
+
+Spot instances can be terminated by AWS at any time if they are needed by on demand customers
+
+If AWS terminates the instance, you will not be charged. If you terminate the instance, you will be charged by the hours it ran for
+
+These servers can be reclaimed within a 2 minute warning 
+
+Lets say that we are bidding $5 for a server which costs $10. Once less people start using AWS, the price comes down to $5 and now we own that server and we run our workload. As more and more people start using the AWS infrastructure, the price for the server starts coming back up and once it passes $5, we get a 2 minute warning and after 2 minutes our server will be taken away from us 
+
+##### Greatest Savings 
+
+## Dedicated
+
+Guarantee of isolated physical/virtual hardware
+
+Can be on demand/reserved/spot
+
+##### Most Expensive
+
+## Savings Plan
+
+Simplifies the purchasing plans
+
+- Compute Saving Plans -> Most flexibility. Cost reduced by 66%. Automatically applies to EC2 instances, Fargate, Lambda. Instance type, size, AZ, region, OS and tenancy do not matter
+
+- EC2 Instance Saving Plans -> Lowest price. 72% savings in exchange for commitment to usage of individual instance families in a region. Reduces cost on selected instance family. AZ, size, OS and tenancy do not matter
+
+- SageMaker Saving Plans -> Helps to reduce SageMaker costs by 64%. Automatically applied to Sagemaker regardless of instance family, size, region
+
+We can choose a 1 year term or 3 years term
+
+The payment options are all upfront, partial upfront and no upfront
+
+We choose the amount we pay per hour
 
 ## LightSail
 
@@ -867,21 +1062,65 @@ VM is managed by AWS and we have to manage the app
 
 ## Containers
 
-A container is a lightweight virtual environment that quickly runs by using the OS kernel. They contain our code and the software to run it
+Virtual Machines -> Running multiple virtual computers within a physical computer
+
+These virtual computers borrow a part of resources (CPU, memory, storage) from the physical computer and use that to run. Made possible by a hypervisor
+
+Multiple computers can share a single physical server
+
+When using VMs, there will be some wasted resources which can be used by VMs as and when they require
+
+
+Containers -> A lightweight virtual environment containing our code that quickly runs by virtualizing the OS
+
+Allow us to run apps which are isolated from each other
+
+Docker -> PaaS products that are used to create containers by virtualizing the OS
+
+- Docker CLI -> CLI tool to download/upload/run/build containers
+- Dockerfile -> Instructions that Docker uses to add our app files and software to a single package called an image
+- Docker Hub/Registry -> Platform where docker images are stored for the public to use. Similar to Github
+- Docker Compose -> Tool and configuration file to work with multiple containers
+- Docker Swarm -> Orchestration tool for managing deployed multi-containers architectures
+
+
+Monolithic Architecture -> One app is responsible for everything. Tightly coupled
+
+Microservices Architecture -> Multiple small apps are responsible for one thing. Isolated and stateless
+
+
+Kubernetes -> Container orchestration tool for automating deployment, scaling and management of multiple containers
+
+Containers will run across multiple VMs
+
+A pod is a group of containers running on a single host and are sharing storage, network resources, etc.
+
+
+Podman is a Docker alternative. It does not have a daemon. Lets us create pods
+
 
 Elastic Container Service (ECS) can be used to launch Docker containers. It launches containers on multiple EC2 instances which have Docker installed 
 
 Elastic Container Registery (ECR) is the repository which has container images (blueprints). To launch a container, its image needs to be downloaded from ECR
 
+
 Elastic Kubernetes Service (EKS) is a managed Kubernetes service that is used to manage multiple containers
 
 Clusters are groups of EC2 instances that are running containers which can be managed via EKS or ECS
 
+
 Serverless services are those in which AWS will manage and configure servers
 
-AWS Fargate is a service that is used to launch containers without the need of servers
+AWS Fargate is a service that is used to launch containers without the need of servers. Has cold start
 
-AWS Lambda is a service used to run pieces of code without servers. The resource to which a request can be made to run your code is called a function. We simply upload our code, choose the amount of memory it will use and how long it should run for. The code can be ran by making a request to the Lambda function. Charge is based on amount of time code runs for and the number of requests made to the function
+AWS Lambda is a service used to run pieces of code without servers. The code we run is known as a function. We simply upload our code, choose the amount of memory it will use and how long it should run for. The code can be ran by making a request to Lambda. Charge is based on amount of time code runs for and the number of requests made to the function
+
+
+App Runner -> Used to run apps on containers. PaaS 
+
+AWS Copilot CLI -> Build, release and operator production ready containerized apps on EC2, Fargate and App Runner
+
+X-Ray -> Analyze and debug between microservices
 
 ## Higher Performance Computing (HPC)
 
@@ -929,17 +1168,21 @@ You are charged by the hour/second, depending on the OS.
 
 Most open-source operating systems such as Linux are charged by the second, for a minimum of 1 minute. Windows is charged by the hour
 
-### Reserved Instances(RI)
+### Reserved 
 
 For a server which will be running for a long time such as 1 year or 3 years 
 
+Save upto 75%
+
+Best for stead apps whose resource usage is known
+
+We can resell unused reserved instances in the Reserved Instance Marketplace
+
 Changes the billing model to a complete/partial/up front 
 
-In an RI, if we purchase a system, then IT WILL BE A PERMANENT ACTION
+If we purchase a instance, then IT WILL BE A PERMANENT ACTION
 
-RI IS A BILLING MODEL 
-
-AWS offers Standard RIs for 1-year or 3-year terms
+AWS offers 1 year or 3 years terms
 
 ### Spot 
 
@@ -951,7 +1194,7 @@ We can only use stateless workloads i.e. we can shutdown the workload and bring 
 
 These servers can be reclaimed within a 2 minute warning 
 
-Lets say that we are bidding $5 for a server which costs $10. Gradually the price comes down to $5 and now we own that server and we run our workload. As more and more people start using the AWS infrastructure, the price for the server starts coming back up and once it passes $5, we get a 2 minute warning and after 2 minutes our server will be taken away from us 
+Lets say that we are bidding $5 for a server which costs $10. Once less people start using AWS, the price comes down to $5 and now we own that server and we run our workload. As more and more people start using the AWS infrastructure, the price for the server starts coming back up and once it passes $5, we get a 2 minute warning and after 2 minutes our server will be taken away from us 
 
 ### Savings Plan
 
@@ -972,6 +1215,8 @@ Automatically add/remove EC2 instances to meet the current demand of traffic
 Only runs the amount of instances that are required
 
 Helps save money
+
+When we delete an ASG, all the EC2 instances created by it are deleted
 
 ### Elastic Load Balancer (ELB)
 
@@ -1180,6 +1425,8 @@ Columns = Fields
 
 DynamoDB -> Serverless high performance NoSQL key-value and document database. Can store billions of records. Can be scaled to a great extent. Single digit millisecond read latency. The more pressure we put on it, the more queries continue, the faster it is.  No management required. Cost effective. Can be made faster using DynamoDB Accelerator(DAX). It is a caching server that sits in front of DynamoDB which has sub millisecond read latency
 
+PartiQL -> Used to run SQL queries to perform operations on a DynamoDB database
+
 DocumentDB -> NoSQL document database. It is very similar to MongoDB
 
 Amazon Keyspaces -> Managed Apache Cassandra database. NoSQL key-value database. 
@@ -1196,7 +1443,7 @@ RDS On VMware -> Allows to deploy the RDS supported data management systems on a
 
 ## Others
 
-Redshift -> Managed data warehouse than can store peta bytes of data that is supposed to be stored for a long time. Grabs data from an S3 bucket. Expensive. Fast. Complex queries can be executed. Used to store data which is used for generating analytics/report. Data can be sent to Amazon QuickSight (Used to create beautiful reports about data)
+Redshift -> Managed data warehouse than can store petabytes of data that is supposed to be stored for a long time. Grabs data from an S3 bucket. Expensive. Fast. Complex queries can be executed. Used to store data which is used for generating analytics/report. Data can be sent to Amazon QuickSight (Used to create beautiful reports about data)
 
 ElastiCache -> Managed database of an in-memory and caching databases such as Redis and Memcached 
 
@@ -1207,3 +1454,457 @@ Amazon Timestreams -> Managed time series database. Used to measure how data cha
 Amazon Quantum Ledger Database -> Managed ledger database that provides transport, unchangeable and cryptographically different transaction logs
 
 Database Migration Service (DMS) -> Used to migrate data from an on prem database to an AWS database, two databases in the same/different account using different database management systems or from a relational to a non relational database. Lets say we have a database on prem which we want to shift to the cloud using DMS. If people are constantly writing to that database, DMS will still continue to push data to the cloud
+
+# Networking
+
+## Virtual Private Cloud (VPC)
+
+An isolated section of AWS where we can launch our resources
+
+Our private cloud in AWS's public cloud
+
+We can change the number of IP addresses using a CIDR 
+
+## Internet Gateway
+
+Virtual router that allows resources in the VPC to access the internet
+
+## Route Tables
+
+Tables which determine how traffic is routed between subnets
+
+## Region
+
+Geographically location of our VPC
+
+## Availability Zone
+
+A VPC consists of an AZ which is running many services
+
+We should setup more than 1 AZ in our VPC, so that if 1 goes down, the other one is still up and running 
+
+## Subnets
+
+A logical division of a larger network
+
+Lets us divide our network into multiple smaller networks
+
+They have a smaller CIDR range than the VPC's CIDR
+
+- Public Subnet -> Connected to the internet 
+- Private Subnet -> Not connected to the internet
+
+## Network Access Control Lists (NACLs)
+
+Firewalls that determine which traffic is allowed/not allowed to enter a subnet
+
+Operate at Layer 3
+
+We can create allow/deny rules
+
+Can be used to block specific IP addresses
+
+Stateless firewall -> If it receives a packet and that packet is allowed to pass through to an EC2 instance and if that instance needs to send a packet back (as a response), then the NACL will check if an outbound rule is defined or not. If not, the packet will not be able to reach the host
+
+## Security Group
+
+Firewall for EC2 instances
+
+Operate at Layer 7
+
+We can create only allow rules. Anything other than allow rules are considered to be deny rules
+
+Can be used to allow traffic to a specific port but cannot be used to block specific IPs
+
+Stateful firewall -> If it receives a packet on an allowed port and the EC2 instance needs to send a packet back (as a response), then the security group will automatically allow the packet to be sent back even if an outbound rule is not defined. This is because the packet was sent to an allowed inbound port
+
+## AWS Virtual Private Network (VPN)
+
+Allows for a virtual secure connection between on prem/office and our AWS VPC
+
+## Direct Connect
+
+Allows a physical gigabit connection between on prem/office and our AWS VPC
+
+Very fast
+
+Offer high bandwidth and low latency
+
+## Private Links
+
+Keeps traffic in the AWS VPC and makes secure that it does not reach the internet 
+
+## AWS CloudFront
+
+Provides a Cloud Distribution Network (CDN)
+
+Data is cached in edge locations
+
+Allows end users to quickly retrieve data from our app
+
+# Identity
+
+## Zero Trust Model
+
+Trust no one and verify everything
+
+Becomes the primary securtiy perimeter (first line of defense and it protects a company's cloud resources)
+
+Attackers can bypass access controls and thus traditional measures are not sufficient 
+
+Traditional way was using firewalls and VPNs. Networks were the boundaries of the company (Network-Centric)
+
+Nowadays, employees bring their own devices, have remote computers and we cannot trust if the employee is in a secure place. Also controls like MFA and providing temporary access to a resource (Identity-Centric)
+
+Identity-Centric augments Network-Centric Security and does not replace it
+
+AWS does not allow for intelligent identity security controls
+
+Identity and Access Management (IAM) -> 
+
+- Create users, groups, roles
+- Policies (Permissions to allow/deny users from accessing resources)
+- Permission boundaries (Resources which users are not allowed to access)
+- Service control policies (Permissions for all accounts in an organization)
+- Policy conditions (Allow/deny actions if a condition is true or false)
+
+AWS CloudTrail -> Stores logs of all requests made to the AWS API from the web console/SDK/CLI
+
+Amazon GuardDuty -> Intrustion Detection System which detects suspicious/malicious activities by analyzing logs. Uses ML to do so
+
+Amazon Detective -> Analyze, investigate and quickly identify security issues
+
+AWS Single Sign On (SSO) -> Let 3rd party zero trust tools (Azure AD, JumpCloud, Google BeyondCorp) access your AWS resources
+
+## Directory Services
+
+Software that is used to store, organize and manage information about network resources
+
+Data is stored in a database
+
+They also help users/computers identify resources and services in the network
+
+Map names of resources to their network addresses 
+
+A directory server is the computer on which the directory service runs
+
+Each resource in the network is an object. Each object has attributes related to it which are stored by the service
+
+Examples: Active Directory, Apache Directory Service, OpenLDAP, JumpCloud
+
+## Identity Providers (IdPs)
+
+An entity that creates, manages and maintains identity information for users
+
+Provides authentication services to applications 
+
+It is a trusted provider of your identity that lets you access other services
+
+Examples: Facebook, Amazon, Google
+
+Federated Identity is a method of linking an identity across multiple identity management systems
+
+Examples: OpenID (Decentrialized Authentication Protocol), OAuth 2.0 (Industry standard protocol for authorization) and SAML (Exchanging authentication and authorization information)
+
+## Single Sign On
+
+Authentication scheme that allows a user log into multiple systems/services using a single ID and password
+
+Once a user is logged into the primary software, they automatically get logged into the others
+
+SAML (Security Assertion Markup Language) lets us use SSO
+
+AWS SSO is used to create or connect your identities in AWS once and manage access across your organization
+
+## LDAP
+
+Lightweight Directory Access Protocol
+
+Layer 7 protocol for remotely accessing and managing the database of our directory service
+
+Allows for same sign on i.e. users have a single ID and password but have to enter the credentials whenever they wish to log into any system/service
+
+Most SSO systems use LDAP
+
+## Multi Factor Authentication (MFA)
+
+Security control wherein you have to use a secondary device to authenticate after providing your ID and password
+
+Protects people even after their password has been stolen
+
+1st factor -> ID and password 
+
+2nd factor -> Secondary device
+
+## Security Keys
+
+A second device used for MFA to gain access to an app/computer
+
+It maybe a memory stick. When you press the exposed metal part of the device, it will generate and autofill a token
+
+Example: Yubikey
+
+Virtual keys are an app which emulate the physical keys
+
+## AWS Identity and Access Management (IAM)
+
+Create and manage users, groups, permissions 
+
+Users log into the web console/interact with the API via the SDK/CLI using a key
+
+Groups are a collection of users. Instead of assigning the same permissions to multiple users, we can add all the users to the group and add permissions to the group
+
+Roles grant temporary permissions to AWS resources so that they can perform certain actions via the API
+
+Policies are JSON files which grant allow/deny a user/group/role from accessing a resources. Used to handle authorization 
+
+Permissions refers to which requests can/cannot be made to the API via a user/group/role. Represented in the policy 
+
+## Principle of Least Privilege
+
+Concept of providing a user/app with the least amount of permissions to perform a task
+
+- Just Enough Access (JEA) -> Permitting only the exact actions for a entity to perform the task
+- Just Enough Time (JIT) -> Permitting the smallest length of time to the entity to perform the task
+
+Risk based Adaptive Policies -> Each attempt to access a resource will generate a risk score which determines how likely the request has come from a compromised source. Score is calculated based on device, location, source IP, etc. As of now, AWS does not have this built into AWS
+
+We can use ConsoleMe instead
+
+## AWS Users
+
+AWS Account -> Our account holding our AWS resources
+
+- Root User -> Special account under the main account which has full access to all resources. Cannot be deleted. Permissions can be controlled via a service control policy. Should not be used for daily/common tasks
+
+- IAM User -> User for common tasks and permissions are assigned to it
+
+Only the root user can perform these tasks
+
+- Changing account settings (name, email, passwords)
+- Create users and add/remove their permissions 
+- Access the billing and cost management console
+- Delete the account
+- Change/cancel a support plan
+- Register as a seller in the RI Marketplace
+- Sign up for GovCloud
+- Create an organization
+
+# Application Integration
+
+Processing of letting 2 independent apps communicate and work with one another
+
+The process is performed by a system in between the apps
+
+Lets us perform 
+
+- Message Queueing
+- Streaming
+- Pub-Sub (Publish-Subscribe)
+- API Gateways
+- State Machine
+- Event Bus
+
+## Queueing
+
+A messaging system provides communication via messages/events between a sender and receiver 
+
+A queueing system is a messaging system that will deleted messages once they have been read
+
+Not real time
+
+A receiver will pull the message from the sender
+
+AWS Simple Queueing Service is a fully managed queueing service that enables reliable communication between systems, apps and microservices
+
+Allows us to retain and replay the message if there is a problem
+
+Messages are stored until they are grabbed by the person/app to which we are sending the message 
+
+Two flavors
+- Standard -> Messages go on and the message is grabbed
+- FIFO -> Ordered messaged, such as if we specify the order a-b-c, then the messages are sent in that order
+
+## Streaming
+
+We have multiple receivers who can react (reply) to events (messages)
+
+Events are present in the stream for long periods
+
+Real time
+
+More expensive
+
+Kinesis is a managed AWS service for collecting, processing and analyzing real time data 
+
+## Pub-Sub (Publish-Subscribe)
+
+The publishers (Senders) send messages to an event bus. It will categorize the messages into groups
+
+The subscribers (Receivers) subscribe to these groups. When a new message appears in the group, all the subscribes receive that message
+
+Publishers have no knowledge about subscribers 
+
+Subscribers do not pull messages. Instead they are automatically sent to subscribers
+
+Way of sending messages for app-app or app-person communications 
+
+Simple Notification Service (SNS) is a highly available, durable, secure, managed pub-sub messaging service that allows for communication between apps/resources
+
+Offers automatic scaling and is reliable
+
+We can send messages to millions of users
+
+SNS Topics are the event buses which receive messages from publishers, categorize them and send them to the subscribers
+
+When sending a message via SNS, the message is sent to a topic in SNS which sends it to the destination such as SQS, email or phone
+
+The way destinations are defined are by using subscriptions. Subscriptions refer to the destination such as phone/email
+
+SNS IS A FIRE AND FORGOT MESSAGING SYSTEM. When SNS sends a message from the topic via the subscription to the email, it will simply send it and if there is an error on the other end, there is no check for that and the message is gone 
+
+## API Gateway
+
+A program that acts as a single entry point between an app/user and a backend service
+
+Allows for logging, routing, formatting of request/response
+
+Amazon API Gateway is a service that lets us create secure APIs
+
+The APIs are scalable
+
+The APIs let other apps/users access data/perform operations via a backend service
+
+Lets us create API endpoints which can be routed to services
+
+## State Machines
+
+A model which decides how a state moves to another based on conditions
+
+It is like a flow chart
+
+AWS Step Functions perform these functions
+
+- Coordinate multiple services into serverless workflow
+- Graphical console to visualize components of our app
+- Automatically triggers and tracks each step and retries when errors occur
+- Logs each step
+
+## Event Bus
+
+Receives messages from a source and sends them to a target based on rules
+
+EventBridge is a serverless event bus that is used for streaming real time data to apps
+
+- Default Event Bus -> All AWS accounts have a default event bus
+- Custom Event Bus -> Scoped to multiple accounts/other AWS accounts
+- SaaS Event Bus -> Scoped to with 3rd party SaaS providers
+
+Producers -> Services that send messages to the event bus
+
+Event -> Messages that travel from source to destination. JSON format
+
+Partner Sources -> 3rd party apps that can send messages to the event bus
+
+Rules -> Determines which events are allowed to be sent to the targets (100 rules per bus)
+
+Targets -> AWS Services that receive messages (5 targets per rule)
+
+## Other services
+
+Amazon MQ -> Managed message broker services that uses Apache ActiveMQ
+
+Managed Kafka Service (MSK) -> Managed Apache Kafka Service. Used for building real time streaming data pipelines and apps
+
+AppSync -> Managed GraphSQL Service. Used to query data from many data sources
+
+# Governance
+
+AWS Organizations allows us to create new AWS accounts and allows for central management of bills, access controls, security and shared resources across the accounts
+
+Organizational Units (OUs) are a group of AWS accounts within an organization. There can be multiple OUs in an OU
+
+Service Control Policies (SCPs) are permissions for all/specific accounts in an organization. Give central control over the permissions of the accounts 
+
+Once turned on, it cannot be turned off
+
+In an organization, there will be a master/root account to manage the other accounts
+
+AWS Control Tower -> Helps enterprises setup a secure multi-account infrastructure 
+
+Provides an initial environment to start
+
+Replaced AWS Landing Zones
+
+It consists of
+
+- Landing zone is a baseline environment that follows best practice to start production ready workloads. SSO is enabled, logging by CloudTrail, cross-account security auditing
+
+- Account Factory automates creation of new accounts in our organization. Does so by using pre-approved account configurations. We have to configure it with pre-approved network configuration and region selections. Allows developers to configure and create new accounts using AWS Service Catalog
+
+- Guardrails -> Pre-packaged governance rules for security, operations and compliance that customers can select and apply to all/specific accounts of an organization
+
+
+Change management -> Formal process of monitoring, enforcing and remediating changes
+
+Compliance as Code (CaC) -> Using code to automate monitoring, enforcing and remediating changes and staying compliant with compliance programs
+
+AWS Config -> Compliance as Code tool to manage changes in AWS accounts. Works on a per region basis i.e. if we setup it in a specific region, it can track changes made to resources in that region only
+
+- Used to get a list of all resources in a regions and track changes to them
+- To make sure a resource is configured in such a way that it is compliant
+- To analyze security weaknesses via a history
+
+
+AWS Quick Starts -> Prebuilt templates built by AWS and partners to help deploy a wide range of stacks
+
+Reduces manual procedures to few steps
+
+Lets us bring up an architecture in less than 30min
+
+Consists of 3 parts
+
+- Reference architecture for deployment
+- CloudFormation templates to automate and configure deployment
+- Guide explaining the architecture and implementation
+
+
+A tag is a key-value pair of metadata that can be assigned to an AWS resource
+
+Allow us to organize resources for
+
+- Resource management 
+- Cost management and optimization
+- Security
+- Operation management
+- Automation
+- Governance and compliance
+
+Resource Groups -> Collection of AWS resource that share one or more tags
+
+Appear in Global Console Header and Systems Manager
+
+We can change the setting to change which resources appear as a part of a group. Can displays details about resources based on
+
+- Metrics
+- Alarms
+- Configurations
+
+
+Business Centric Services -> 
+
+- Amazon Connect -> Virtual call center service. Create a workflow to route calls, records calls and manage a queue of callers
+
+- Workspaces -> Virtual remote desktop service. Secure managed service to provision Windows/Linux desktops in few minutes which can scale upto 1000s
+
+- WorkDocs -> Shared collaboration service. Centralized storage of files. Like a shared folder owned by the company
+
+-  Chime -> Video conference service. Allows for screensharing and multiple people on the same call. Secure by default. Has a calendar
+
+- WorkMail -> Managed business email, contacts and calendar service. Supports existing desktop/mobile apps. Uses IMAP
+
+- Pinpoint -> Marketing campaign managament service. Used to sending messages via SMS, notifications and voice messages
+
+- Simple Email Service (SES) -> Transactional email service. Lets apps send emails to users
+
+- QuickSight -> Business Intelligence service. Connect data sources and visualize data as graphs without programming knowledge
